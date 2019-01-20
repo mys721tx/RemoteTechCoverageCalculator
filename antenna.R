@@ -5,26 +5,26 @@ minima <- read.csv("minima.csv", header = TRUE, row.names = 1)
 
 antennas <- read.csv("antennas.csv", header = TRUE, row.names = 1)
 
+
+calculate_coverage <- function(distance_matrix, planet, antenna, orbit) {
+    tan_values <- tan(antenna$angle * pi / 180 / 2)
+    distances <- distance_matrix[, planet]
+
+    crone_distance <- tan_values %o% distances
+    crone_coverage <- crone_distance > orbit
+
+    range_coverage <- outer(antenna$range, distances, FUN = ">")
+
+    result <- crone_coverage & range_coverage
+
+    colnames(result) <- colnames(distance_matrix)
+    rownames(result) <- rownames(antenna)
+
+    return(result)
+}
+
 orbit <- 3463.330
 
-tan_values <- tan(antennas$angle * pi / 180 / 2)
+minima_result <- calculate_coverage(minima, "Kerbin", antennas, orbit)
 
-crone_distance <- tan_values %o% minima$Kerbin
-crone_coverage <- crone_distance > orbit
-
-range_coverage <- outer(antennas$range, minima$Kerbin, FUN = ">")
-
-minima_result <- crone_coverage & range_coverage
-
-colnames(minima_result) <- colnames(minima)
-rownames(minima_result) <- rownames(antennas)
-
-crone_distance <- tan_values %o% maxima$Kerbin
-crone_coverage <- crone_distance > orbit
-
-range_coverage <- outer(antennas$range, maxima$Kerbin, FUN = ">")
-
-maxima_result <- crone_coverage & range_coverage
-
-colnames(maxima_result) <- colnames(maxima)
-rownames(maxima_result) <- rownames(antennas)
+maxima_result <- calculate_coverage(maxima, "Kerbin", antennas, orbit)
