@@ -2,6 +2,10 @@
 
 Calculate if your relay constellation can be covered by a given type of antenna.
 
+## Notes
+
+All distances are in kilometer.
+
 ## Author
 
 * [Yishen Miao](https://github.com/mys721tx)
